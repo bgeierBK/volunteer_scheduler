@@ -22,7 +22,17 @@ class User(db.Model, SerializerMixin):
     _hashed_password = db.Column(db.String, nullable=False)
    
     shifts = db.relationship('Shift', back_populates='user')
-    schools = db.relationship('School', secondary=user_school_association, back_populates='schools')
+    schools = db.relationship('School', secondary=user_school_association, back_populates='users')
+
+class School(db.Model, SerializerMixin):
+    __tablename__ = 'schools_table'
+
+    id = db.Column(db.Integer, primary_key =True)
+    name = db.Column(db.String, nullable = False)
+    _hashed_accessCode = db.Column(db.String, nullable = False)
+
+    users = db.relationship('User', secondary=user_school_association, back_populates='schools')
+    months = db.relationship('Month', back_populates='school')
 
 class Month(db.Model, SerializerMixin):
     __tablename__ = 'months_table'
@@ -30,6 +40,11 @@ class Month(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key =True)
     name = db.Column(db.String, unique =True, nullable=False)
     notes = db.Column(db.String)
+    
+    school_id= db.Column(db.Integer, db.ForeignKey('schools_table.id'), nullable=False, name='fk_month_school_id')
+
+    shifts = db.relationship('Shift', back_populates='month')
+    school = db.relationship('School', back_populates='months')
 
 class Shift(db.Model, SerializerMixin):
     __tablename__ = 'shifts_table'
@@ -41,18 +56,14 @@ class Shift(db.Model, SerializerMixin):
     endTime = db.Column(db.String, nullable = False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users_table.id'), nullable=False)
-    user=db.relationship('User', back_populates='shift')
+    month_id = db.Column(db.Integer, db.ForeignKey('months_table.id'), nullable=False)
+
+    user=db.relationship('User', back_populates='shifts')
+    month=db.relationship('Month', back_populates='shifts')
 
 
 
-class School(db.Model, SerializerMixin):
-    __tablename__ = 'schools_table'
 
-    id = db.Column(db.Integer, primary_key =True)
-    name = db.Column(db.String, nullable = False)
-    _hashed_accessCode = db.Column(db.String, nullable = False)
-
-    users = db.relationship('User', secondary=user_school_association, back_populates='schools')
     
      
      
