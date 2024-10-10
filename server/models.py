@@ -24,6 +24,16 @@ class User(db.Model, SerializerMixin):
     shifts = db.relationship('Shift', back_populates='user')
     schools = db.relationship('School', secondary=user_school_association, back_populates='users')
 
+    @hybrid_property
+    def hashed_password(self):
+        raise AttributeError('Password hashes may not be viewed')
+    
+    @hashed_password.setter
+    def hashed_password(self, password):
+        hashed_password = bcrypt.generate_password_hash(
+        (password).encode('utf-8'))
+        self._hashed_password=hashed_password
+
 class School(db.Model, SerializerMixin):
     __tablename__ = 'schools_table'
 
@@ -33,6 +43,16 @@ class School(db.Model, SerializerMixin):
 
     users = db.relationship('User', secondary=user_school_association, back_populates='schools')
     months = db.relationship('Month', back_populates='school')
+
+    @hybrid_property
+    def hashed_accessCode(self):
+        raise AttributeError('Access Code hashes may not be viewed')
+    
+    @hashed_accessCode.setter
+    def hashed_accessCode(self, password):
+        hashed_accessCode = bcrypt.generate_password_hash(
+        (password).encode('utf-8'))
+        self._hashed_accessCode=hashed_accessCode
 
 class Month(db.Model, SerializerMixin):
     __tablename__ = 'months_table'
