@@ -18,7 +18,6 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key =True)
     fullName = db.Column(db.String, unique =True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
-    childsClass = db.Column(db.String, nullable=False )
     _hashed_password = db.Column(db.String, nullable=False)
    
     shifts = db.relationship('Shift', back_populates='user')
