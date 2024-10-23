@@ -141,3 +141,98 @@ def add_school():
         return new_school.to_dict(), 201
     except Exception as e:
         return {'error': str(e)}, 406
+
+## month routes
+
+@app.get('/api/months')
+def get_months():
+    return [month.to_dict() for month in Month.query.all()], 200
+
+@app.get('/api/months/<int:id>')
+def get_one_month(id):
+    month = Month.query.where(Month.id == id).first()
+    if month:
+        return month.to_dict(), 200
+    return {}, 400
+
+@app.patch('/api/months/<int:id>')
+def update_month(id):
+    month = Month.query.where(Month.id == id).first()
+    if month:
+        for key in request.json.keys():
+            setattr(month, key, request.json[key])
+            db.session.add(month)
+            db.sessoin.commit()
+            return month.to_dict()
+        return {}, 404
+
+@app.delete('/api/months/<int:id>')
+def delete_month(id):
+    month = Month.query.where(Month.id ==id).first()
+    if month:
+        db.session.delete(month)
+        db.session.commit()
+        return {}, 204
+    return {}, 404
+
+@app.post('/api/months')
+def add_month():
+    try:
+        new_month = Month(
+            name = request.json.get('name'),
+            notes = request.json.get('notes')
+        )
+        db.session.add(new_month)
+        db.session.commit()
+        return new_month.to_dict(), 201
+    except Exception as e:
+        return {'error': str(e)}, 406
+    
+## shift routes
+
+@app.get('/api/shifts')
+def get_shifts():
+    return [shift.to_dict() for shift in Shift.query.all()], 200
+
+@app.get('/api/shifts/<int:id>')
+def get_one_shift(id):
+    shift = Shift.query.where(Shift.id == id).first()
+    if shift:
+        return shift.to_dict(), 200
+    return {}, 400
+
+@app.patch('/api/shifts/<int:id>')
+def update_shift(id):
+    shift = Shift.query.where(Shift.id == id).first()
+    if shift:
+        for key in request.json.keys():
+            setattr(shift, key, request.json[key])
+            db.session.add(shift)
+            db.sessoin.commit()
+            return shift.to_dict()
+        return {}, 404
+
+@app.delete('/api/shifts/<int:id>')
+def delete_shift(id):
+    shift = Shift.query.where(Shift.id ==id).first()
+    if shift:
+        db.session.delete(shift)
+        db.session.commit()
+        return {}, 204
+    return {}, 404
+
+@app.post('/api/shifts')
+def add_shift():
+    try:
+        new_shift = Shift(
+            description = request.json.get('description'),
+            day = request.json.get('day'),
+            startTime = request.json.get('starttime'),
+            endtime = request.json.get('endtime')
+        )
+        db.session.add(new_shift)
+        db.session.commit()
+        return new_shift.to_dict(), 201
+    except Exception as e:
+        return {'error': str(e)}, 406
+    
